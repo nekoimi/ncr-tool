@@ -1,0 +1,108 @@
+name: Build & Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        type: string
+        required: true
+
+jobs:
+  build_binaries:
+    runs-on: ubuntu-latest
+    env:
+      CGO_ENABLED: 0
+      NAME: ncr-tool
+      DESC: "ncr-mirror cli tools"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check Version
+        id: prep
+        env:
+          REF: ${{ inputs.tag }}
+        run: |
+          tag=${{ inputs.tag }}
+          version=$(echo $tag | sed 's/v//g')
+          echo "VERSION=$version" >> $GITHUB_OUTPUT
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          cache-dependency-path: |
+            go.mod
+            go.sum
+          go-version: ^1.21
+
+      - name: Build Binaries
+        id: build
+        shell: bash
+        run: |
+          mkdir ncr-tool-binaries
+          
+          foreach ($arch in @('amd64', 'arm64')) {
+            $env:GOARCH = $arch
+            $filename = linux-$arch
+            go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION} -ldflags="-extldflags -static" -trimpath
+          }
+          
+          foreach ($arch in @('amd64', 'arm64')) {
+            $env:GOOS = 'windows'
+            $env:GOARCH = $arch
+            $filename = windows-$arch
+            go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION}.exe -ldflags="-extldflags -static" -trimpath
+          }
+          
+          foreach ($arch in @('amd64', 'arm64')) {
+            $env:GOOS = 'darwin'
+            $env:GOARCH = $arch
+            $filename = darwin-$arch
+            go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION} -ldflags="-extldflags -static" -trimpath
+          }
+
+      - name: Upload Artifact
+        uses: nanoufo/action-upload-artifacts-and-release-assets@v2
+        with:
+          path: |
+            ncr-tool-binaries/*
+
+  release:
+    runs-on: ubuntu-22.04
+    needs: [build_binaries]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check Version
+        id: prep
+        env:
+          REF: ${{ inputs.tag }}
+        run: |
+          tag=${{ inputs.tag }}
+          version=$(echo $tag | sed 's/v//g')
+          echo "VERSION=$version" >> $GITHUB_OUTPUT
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: builds/
+
+      - name: Move Files to Release Directory
+        shell: bash
+        run: |
+          mkdir -p release
+
+          for file in $(ls builds | grep -E "^ncr-tool"); do
+            mv builds/$file/$file release/
+          done
+
+          for file in $(ls release); do
+            sha256sum release/$file | awk '{print $1}' > release/$file.sha256.txt
+          done
+
+          ls -l release/
