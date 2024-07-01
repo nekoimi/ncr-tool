@@ -63,14 +63,16 @@ jobs:
             filename="darwin-$arch"
             go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION} -ldflags="-extldflags -static" -trimpath
           done
+          
+          ls -l ncr-tool-binaries
 
       - name: Move Files to Release Directory
         shell: bash
         run: |
           mkdir -p release
 
-          for file in $(ls builds | grep -E "^ncr-tool"); do
-            mv ncr-tool-binaries/$file/$file release/
+          for file in $(ls ncr-tool-binaries | grep -E "^ncr-tool"); do
+            mv ncr-tool-binaries/$file release/
           done
 
           for file in $(ls release); do
