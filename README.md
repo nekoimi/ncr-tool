@@ -15,7 +15,7 @@
 运行以下命令安装最新
 
 ```shell
-curl -L -o /usr/local/bin/ncr-tool https://github.com/nekoimi/ncr-tool/releases/download/v0.0.3/ncr-tool-v0.0.3-linux-amd64 && chmod +x /usr/local/bin/ncr-tool
+curl -L -o /usr/local/bin/ncr-tool https://github.com/nekoimi/ncr-tool/releases/download/v0.0.4/ncr-tool-v0.0.4-linux-amd64 && chmod +x /usr/local/bin/ncr-tool
 ```
 
 ### Used
