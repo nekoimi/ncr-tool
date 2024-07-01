@@ -41,7 +41,11 @@ func run(ctx *cli.Context) error {
 	}
 
 	if len(targetImage) == 0 {
-		targetImage = "docker.mirror.403forbidden.run/library/" + image
+		if strings.Count(image, "/") == 0 {
+			targetImage = "docker.mirror.403forbidden.run/library/" + image
+		} else {
+			targetImage = "docker.mirror.403forbidden.run/" + image
+		}
 	}
 
 	log.Printf("Image: %s ===> %s \n", image, targetImage)
