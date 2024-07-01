@@ -64,12 +64,6 @@ jobs:
             go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION} -ldflags="-extldflags -static" -trimpath
           done
 
-      - name: Upload Artifact
-        uses: nanoufo/action-upload-artifacts-and-release-assets@v2
-        with:
-          path: |
-            ncr-tool-binaries/*
-
       - name: Move Files to Release Directory
         shell: bash
         run: |
