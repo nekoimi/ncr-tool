@@ -29,6 +29,8 @@ docker pull nginx:latest
 ncr-tool pull nginx:latest
 ```
 
+不仅适用于docker.io，还可以拉取ghcr.io、quay.io、gcr.io和k8s.gcr.io
+
 ### Uninstall
 
 - linux
@@ -39,7 +41,3 @@ ncr-tool pull nginx:latest
 rm -rf /usr/local/bin/ncr-tool
 ```
 
-
-##### Tips
-
-仅适用于Docker容器服务
