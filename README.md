@@ -11,32 +11,20 @@
 - Linux
 
 ```shell
-curl -L -o /usr/local/bin/ncr-tool https://github.com/nekoimi/ncr-tool/releases/download/v0.0.2/ncr-tool-v0.0.2-linux-amd64
-
-chmod +x /usr/local/bin/ncr-tool
+curl -L -o /usr/local/bin/ncr-tool https://github.com/nekoimi/ncr-tool/releases/download/v0.0.3/ncr-tool-v0.0.3-linux-amd64 && chmod +x /usr/local/bin/ncr-tool
 ```
 
 ### Used
 
 ```shell
 # 以拉取nginx的容器镜像为例
-
-docker pull docker.io/library/nginx:latest
-```
-
-- 使用[ncr-mirror](https://github.com/nekoimi/ncr-mirror)代理拉取:
-
-```shell
-# 1、先通过 ncr-mirror 代理拉取镜像
-docker pull docker.mirror.403forbidden.run/library/nginx:latest
-# 2、重命名为原tag
-docker tag docker.mirror.403forbidden.run/library/nginx:latest docker.io/library/nginx:latest
+docker pull nginx:latest
 ```
 
 - 使用ncr-tool直接拉取
 
 ```shell
-ncr-tool pull docker.io/library/nginx:latest
+ncr-tool pull nginx:latest
 ```
 
 ##### Tips
