@@ -4,16 +4,16 @@ import (
 	"errors"
 	"github.com/nekoimi/ncr-tool/shell"
 	"github.com/urfave/cli/v2"
-	"log"
 	"strings"
 )
 
 var registryMap = make(map[string]string)
 
 var pull = &cli.Command{
-	Name:   "pull",
-	Usage:  "Pull a container image",
-	Action: run,
+	Name:        "pull",
+	Usage:       "Pull a container image",
+	Description: "Pull container image, the supported container image repositories include docker.io, quay.io, ghcr.io, gcr. io, and k8s. gcr. io",
+	Action:      run,
 }
 
 func init() {
@@ -30,7 +30,7 @@ func init() {
 func run(ctx *cli.Context) error {
 	image := ctx.Args().First()
 	if len(image) == 0 {
-		return errors.New("缺少容器镜像参数")
+		return errors.New("missing container image repository parameters")
 	}
 
 	var targetImage string
@@ -48,7 +48,7 @@ func run(ctx *cli.Context) error {
 		}
 	}
 
-	log.Printf("Image: %s ===> %s \n", image, targetImage)
+	log.Infof("Start pulling the image: %s\n", image)
 
 	err := shell.Pull(targetImage)
 	if err != nil {
@@ -59,6 +59,13 @@ func run(ctx *cli.Context) error {
 	if err != nil {
 		return err
 	}
+
+	err = shell.RmImage(targetImage)
+	if err != nil {
+		return err
+	}
+
+	log.Infof("\nSuccessfully downloaded newer image for: %s\n", image)
 
 	return nil
 }

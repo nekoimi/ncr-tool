@@ -2,6 +2,8 @@
 
 [ncr-mirror](https://github.com/nekoimi/ncr-mirror) 命令行容器镜像拉取工具
 
+支持的容器仓库：docker.io、ghcr.io、quay.io、gcr.io和k8s.gcr.io
+
 ### Install
 
 - windows
@@ -28,8 +30,6 @@ docker pull nginx:latest
 ```shell
 ncr-tool pull nginx:latest
 ```
-
-不仅适用于docker.io，还可以拉取ghcr.io、quay.io、gcr.io和k8s.gcr.io
 
 ### Uninstall
 
