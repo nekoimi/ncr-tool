@@ -8,6 +8,8 @@ on:
         required: true
 
 jobs:
+  permissions:
+    contents: write
   build_binaries:
     runs-on: ubuntu-latest
     env:
@@ -32,10 +34,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          cache-dependency-path: |
-            go.mod
-            go.sum
-          go-version: ^1.21
+          go-version-file: go.mod
 
       - name: Build Binaries
         id: build
@@ -69,36 +68,13 @@ jobs:
           path: |
             ncr-tool-binaries/*
 
-  release:
-    runs-on: ubuntu-22.04
-    needs: [build_binaries]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check Version
-        id: prep
-        env:
-          REF: ${{ inputs.tag }}
-        run: |
-          tag=${{ inputs.tag }}
-          version=$(echo $tag | sed 's/v//g')
-          echo "VERSION=$version" >> $GITHUB_OUTPUT
-          echo "VERSION=$version" >> $GITHUB_ENV
-
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: builds/
-
       - name: Move Files to Release Directory
         shell: bash
         run: |
           mkdir -p release
 
           for file in $(ls builds | grep -E "^ncr-tool"); do
-            mv builds/$file/$file release/
+            mv ncr-tool-binaries/$file/$file release/
           done
 
           for file in $(ls release); do
@@ -106,3 +82,10 @@ jobs:
           done
 
           ls -l release/
+
+      - name: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            release/*
