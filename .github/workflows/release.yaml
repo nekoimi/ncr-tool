@@ -4,11 +4,7 @@ on:
   workflow_dispatch:
     push:
       tags:
-        - "v*"
-    inputs:
-      tag:
-        type: string
-        required: true
+        - "v*.*.*"
 
 jobs:
   build_binaries:
@@ -23,16 +19,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+        run: |
+          run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Check Version
         id: prep
-        env:
-          REF: ${{ inputs.tag }}
         run: |
-          tag=${{ inputs.tag }}
-          version=$(echo $tag | sed 's/v//g')
-          echo "VERSION=$version" >> $GITHUB_OUTPUT
-          echo "VERSION=$version" >> $GITHUB_ENV
+          echo "VERSION=${{ env.RELEASE_VERSION }}" >> $GITHUB_OUTPUT
+          echo "VERSION=${{ env.RELEASE_VERSION }}" >> $GITHUB_ENV
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -45,25 +39,28 @@ jobs:
         run: |
           mkdir ncr-tool-binaries
           
-          foreach ($arch in @('amd64', 'arm64')) {
-            $env:GOARCH = $arch
-            $filename = linux-$arch
+          linux_arch=('amd64', 'arm64')
+          for arch in "${linux_arch[@]}"; do
+            export GOARCH = "$arch"
+            filename="linux-$arch"
             go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION} -ldflags="-extldflags -static" -trimpath
-          }
+          done
           
-          foreach ($arch in @('amd64', 'arm64')) {
-            $env:GOOS = 'windows'
-            $env:GOARCH = $arch
-            $filename = windows-$arch
+          windows_arch=('amd64', 'arm64')
+          for arch in "${windows_arch[@]}"; do
+            export GOOS = 'windows'
+            export GOARCH = "$arch"
+            filename="windows-$arch"
             go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION}.exe -ldflags="-extldflags -static" -trimpath
-          }
+          done
           
-          foreach ($arch in @('amd64', 'arm64')) {
+          darwin_arch=('amd64', 'arm64')
+          for arch in "${darwin_arch[@]}"; do
             $env:GOOS = 'darwin'
             $env:GOARCH = $arch
             $filename = darwin-$arch
             go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION} -ldflags="-extldflags -static" -trimpath
-          }
+          done
 
       - name: Upload Artifact
         uses: nanoufo/action-upload-artifacts-and-release-assets@v2
