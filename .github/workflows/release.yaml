@@ -43,24 +43,24 @@ jobs:
           
           linux_arch=('amd64', 'arm64')
           for arch in "${linux_arch[@]}"; do
-            export GOARCH = "$arch"
+            export GOARCH="$arch"
             filename="linux-$arch"
             go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION} -ldflags="-extldflags -static" -trimpath
           done
           
           windows_arch=('amd64', 'arm64')
           for arch in "${windows_arch[@]}"; do
-            export GOOS = 'windows'
-            export GOARCH = "$arch"
+            export GOOS="windows"
+            export GOARCH="$arch"
             filename="windows-$arch"
             go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION}.exe -ldflags="-extldflags -static" -trimpath
           done
           
           darwin_arch=('amd64', 'arm64')
           for arch in "${darwin_arch[@]}"; do
-            $env:GOOS = 'darwin'
-            $env:GOARCH = $arch
-            $filename = darwin-$arch
+            $env:GOOS="darwin"
+            $env:GOARCH=$arch
+            $filename="darwin-$arch"
             go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION} -ldflags="-extldflags -static" -trimpath
           done
 
