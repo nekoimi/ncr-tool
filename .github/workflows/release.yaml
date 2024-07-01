@@ -58,9 +58,9 @@ jobs:
           
           darwin_arch=('amd64' 'arm64')
           for arch in "${darwin_arch[@]}"; do
-            $env:GOOS="darwin"
-            $env:GOARCH=$arch
-            $filename="darwin-$arch"
+            export GOOS="darwin"
+            export GOARCH=$arch
+            filename="darwin-$arch"
             go build -o ncr-tool-binaries/ncr-tool-${filename}_${env:VERSION} -ldflags="-extldflags -static" -trimpath
           done
 
