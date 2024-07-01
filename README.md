@@ -10,6 +10,8 @@
 
 - Linux
 
+运行以下命令安装最新
+
 ```shell
 curl -L -o /usr/local/bin/ncr-tool https://github.com/nekoimi/ncr-tool/releases/download/v0.0.3/ncr-tool-v0.0.3-linux-amd64 && chmod +x /usr/local/bin/ncr-tool
 ```
@@ -26,6 +28,17 @@ docker pull nginx:latest
 ```shell
 ncr-tool pull nginx:latest
 ```
+
+### Uninstall
+
+- linux
+
+直接删除 ncr-tool 文件
+
+```shell
+rm -rf /usr/local/bin/ncr-tool
+```
+
 
 ##### Tips
 
