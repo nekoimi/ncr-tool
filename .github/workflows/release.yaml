@@ -8,10 +8,10 @@ on:
         required: true
 
 jobs:
-  permissions:
-    contents: write
   build_binaries:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       CGO_ENABLED: 0
       NAME: ncr-tool
